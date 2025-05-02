@@ -1,0 +1,17 @@
+{
+  "name": "backend-server",
+  "version": "1.0.0",
+  "description": "TriviaBot backend server",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.3.0",
+    "multer": "^1.4.4-lts.1",
+    "axios": "^1.4.0"
+  }
+}
