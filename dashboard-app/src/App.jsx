@@ -34,8 +34,8 @@ function App() {
     }
 
     try {
-      const response = await axios.post(`${BASE_URL}/api/questions`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      await axios.post(`${BASE_URL}/api/questions`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       toast({
@@ -83,11 +83,19 @@ function App() {
 
           <FormControl isRequired>
             <FormLabel>End Time (PST)</FormLabel>
-            <Input type="datetime-local" value={endTime} onChange={(e) => setEndTime(e.target.value)} />
-            <Text fontSize="sm" color="gray.500">All times are Pacific Time</Text>
+            <Input
+              type="datetime-local"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+            />
+            <Text fontSize="sm" color="gray.500">
+              All times are Pacific Time
+            </Text>
           </FormControl>
 
-          <Button colorScheme="blue" type="submit">Submit</Button>
+          <Button colorScheme="blue" type="submit">
+            Submit
+          </Button>
         </Stack>
       </form>
     </Box>
