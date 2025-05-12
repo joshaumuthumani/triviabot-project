@@ -1,17 +1,15 @@
-# Use official Node.js LTS image
-FROM node:18
+# Use lightweight ARM64-compatible Node.js image
+FROM --platform=linux/arm64 node:18-alpine
 
-# Create and set working directory
+# Set working directory
 WORKDIR /app
 
-# Copy dependency manifests first
-COPY package*.json ./
-
 # Install dependencies
+COPY package*.json ./
 RUN npm install
 
-# Copy application source code
+# Copy source code
 COPY . .
 
-# Start the bot
+# Default command to run the bot
 CMD ["npm", "start"]

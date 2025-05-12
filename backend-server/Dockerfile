@@ -1,4 +1,4 @@
-FROM node:18
+FROM --platform=linux/arm64 node:18-alpine
 
 WORKDIR /app
 
@@ -7,4 +7,5 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm", "run", "dev"]
+EXPOSE 3002
+CMD ["node", "index.js"]

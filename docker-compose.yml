@@ -1,46 +1,53 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  mongo:
-    image: mongo:4.4
-    container_name: triviabot-mongo
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongo_data:/data/db
-
-  backend:
+  # Backend API
+  triviabot-backend:
     build: ./backend-server
     container_name: triviabot-backend
     restart: unless-stopped
-    ports:
-      - "${BACKEND_PORT}:3002"
-    depends_on:
-      - mongo
     environment:
-      MONGO_URI: ${MONGO_URI}
-      DISCORD_WEBHOOK_URL: ${DISCORD_WEBHOOK_URL}
+      - MONGO_URI=${MONGO_URI}
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+    expose:
+      - "3002"
+    networks:
+      - trivia
+    labels:
+      - "traefik.http.routers.triviabot-backend.rule=Host(`api.trivia.willflexbot.uk`)"
+      - "traefik.http.routers.triviabot-backend.entrypoints=websecure"
+      - "traefik.http.services.triviabot-backend.loadbalancer.server.port=3002"
 
-  dashboard:
+  # Dashboard Frontend
+  triviabot-dashboard:
     build: ./dashboard-app
     container_name: triviabot-dashboard
     restart: unless-stopped
-    ports:
-      - "5175:5173"
-    volumes:
-      - ./dashboard-app:/app
+    environment:
+      - VITE_BACKEND_URL=https://api.trivia.willflexbot.uk
+    expose:
+      - "5173"
+    networks:
+      - trivia
+    labels:
+      - "traefik.http.routers.triviabot-frontend.rule=Host(`trivia.willflexbot.uk`)"
+      - "traefik.http.routers.triviabot-frontend.entrypoints=websecure"
+      - "traefik.http.services.triviabot-frontend.loadbalancer.server.port=5173"
 
-  bot:
+  # Discord Bot
+  triviabot-bot:
     build: ./bot-app
     container_name: triviabot-bot
     restart: unless-stopped
     depends_on:
-      - backend
+      - triviabot-backend
     environment:
-      DISCORD_TOKEN: ${DISCORD_TOKEN}
-      BACKEND_URL: http://triviabot-backend:3002
-      TRIVIA_CHANNEL_ID: ${TRIVIA_CHANNEL_ID}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - BACKEND_URL=http://triviabot-backend:3002
+      - TRIVIA_CHANNEL_ID=${TRIVIA_CHANNEL_ID}
+    networks:
+      - trivia
+
+networks:
+  trivia:
+    external: false
