@@ -8,7 +8,6 @@ import {
   Heading,
   Input,
   Stack,
-  useToast,
 } from '@chakra-ui/react';
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
