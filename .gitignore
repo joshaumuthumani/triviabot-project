@@ -1,2 +1,4 @@
 mongo_data/
 mongo_data/
+.env
+backend-server/.env
