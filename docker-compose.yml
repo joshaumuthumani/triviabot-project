@@ -12,7 +12,7 @@ services:
       - "8443:8443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./backend-server/traefik/traefik.yml:/etc/traefik/traefik.yml
+      - ./backend-server/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
     networks:
       - traefik-net
 
