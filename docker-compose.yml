@@ -6,7 +6,8 @@ services:
     container_name: triviabot-backend
     restart: unless-stopped
     environment:
-      - MONGO_URI=${MONGO_URI}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
     expose:
       - "3002"

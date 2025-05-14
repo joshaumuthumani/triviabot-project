@@ -1,29 +1,30 @@
 const express = require('express');
-const app = express();
-const mongoose = require('mongoose');
 const cors = require('cors');
-const questionRoutes = require('./routes/questions');
+const path = require('path');
+require('dotenv').config();
 
-require('dotenv').config(); // Optional if you're using .env for MongoDB URI
+const app = express();
+
+// Routes
+const questionRoutes = require('./routes/questions');
+const winnerRoutes = require('./routes/winners');
+const answerRoutes = require('./routes/answers');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use('/api/questions', questionRoutes);
+// Serve static files (e.g., attachments)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('MongoDB Connected'))
-.catch((err) => console.error('MongoDB connection error:', err));
+// API Routes
+app.use('/api/questions', questionRoutes);
+app.use('/api/winners', winnerRoutes);
+app.use('/api/answers', answerRoutes);
 
 // Start Server
 const PORT = process.env.BACKEND_PORT || 3002;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`✅ Server running on port ${PORT}`);
 });
