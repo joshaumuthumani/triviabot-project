@@ -13,11 +13,14 @@ services:
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
     expose:
       - "3002"
+    labels:
+      - "VIRTUAL_HOST=api.trivia.willflexbot.uk"
+      - "VIRTUAL_PORT=3002"
+      - "LETSENCRYPT_HOST=api.trivia.willflexbot.uk"
+      - "LETSENCRYPT_EMAIL=your-email@example.com"
     networks:
       - trivia
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
+      - nginx-proxy
 
   triviabot-dashboard:
     build: ./dashboard-app
@@ -35,9 +38,6 @@ services:
     networks:
       - trivia
       - nginx-proxy
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
   triviabot-bot:
     build: ./bot-app
@@ -51,9 +51,6 @@ services:
       - TRIVIA_CHANNEL_ID=${TRIVIA_CHANNEL_ID}
     networks:
       - trivia
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
 networks:
   trivia:
