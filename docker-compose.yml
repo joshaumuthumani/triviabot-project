@@ -1,6 +1,23 @@
 version: "3.9"
 
 services:
+  traefik:
+    image: traefik:v2.11
+    container_name: triviabot-traefik
+    restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --entrypoints.web.address=:8080
+      - --entrypoints.websecure.address=:8443
+      - --api.dashboard=true
+    ports:
+      - "8080:8080"      # HTTP for routing
+      - "8443:8443"      # HTTPS if you want TLS later
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik-net
+
   triviabot-backend:
     build:
       context: .
@@ -14,11 +31,13 @@ services:
     expose:
       - "3002"
     labels:
-      - "VIRTUAL_HOST=api.trivia.willflexbot.uk"
-      - "VIRTUAL_PORT=3002"
+      - "traefik.enable=true"
+      - "traefik.http.routers.triviabot-backend.rule=Host(`api.trivia.willflexbot.uk`)"
+      - "traefik.http.routers.triviabot-backend.entrypoints=web"
+      - "traefik.http.services.triviabot-backend.loadbalancer.server.port=3002"
     networks:
       - trivia
-      - nginx-proxy
+      - traefik-net
 
   triviabot-dashboard:
     build: ./dashboard-app
@@ -29,11 +48,13 @@ services:
     expose:
       - "80"
     labels:
-      - "VIRTUAL_HOST=trivia.willflexbot.uk"
-      - "VIRTUAL_PORT=80"
+      - "traefik.enable=true"
+      - "traefik.http.routers.triviabot-dashboard.rule=Host(`trivia.willflexbot.uk`)"
+      - "traefik.http.routers.triviabot-dashboard.entrypoints=web"
+      - "traefik.http.services.triviabot-dashboard.loadbalancer.server.port=80"
     networks:
       - trivia
-      - nginx-proxy
+      - traefik-net
 
   triviabot-bot:
     build: ./bot-app
@@ -51,5 +72,5 @@ services:
 networks:
   trivia:
     external: false
-  nginx-proxy:
+  traefik-net:
     external: true
