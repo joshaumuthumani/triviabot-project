@@ -2,7 +2,9 @@ version: "3.9"
 
 services:
   triviabot-backend:
-    build: ./backend-server
+    build:
+      context: .
+      dockerfile: backend-server/Dockerfile
     container_name: triviabot-backend
     restart: unless-stopped
     environment:
