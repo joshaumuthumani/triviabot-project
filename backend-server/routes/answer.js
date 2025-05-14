@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const supabase = require('../../supabaseClient');
+const supabase = require('../supabaseClient');
 
 // POST /api/answers
 router.post('/', async (req, res) => {
