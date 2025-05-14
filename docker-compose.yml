@@ -6,23 +6,15 @@ services:
     container_name: triviabot-traefik
     restart: unless-stopped
     command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:8080
-      - --entrypoints.websecure.address=:8443
-      - --api.dashboard=true
+      - --configFile=/etc/traefik/traefik.yml
     ports:
       - "8080:8080"
       - "8443:8443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./backend-server/traefik/traefik.yml:/etc/traefik/traefik.yml
     networks:
       - traefik-net
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.traefik.entrypoints=web"
-      - "traefik.http.routers.traefik.service=api@internal"
 
   triviabot-backend:
     build:
