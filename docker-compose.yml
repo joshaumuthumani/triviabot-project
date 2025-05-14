@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   triviabot-backend:
     build: ./backend-server
@@ -10,6 +12,9 @@ services:
       - "3002"
     networks:
       - trivia
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 
   triviabot-dashboard:
     build: ./dashboard-app
@@ -27,6 +32,9 @@ services:
     networks:
       - trivia
       - nginx-proxy
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 
   triviabot-bot:
     build: ./bot-app
@@ -40,6 +48,9 @@ services:
       - TRIVIA_CHANNEL_ID=${TRIVIA_CHANNEL_ID}
     networks:
       - trivia
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 
 networks:
   trivia:
