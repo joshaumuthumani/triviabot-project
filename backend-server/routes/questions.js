@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }).single('attachment');
 const axios = require('axios');
-const supabase = require('../supabaseClient'); // Adjusted path
+const supabase = require('../../supabaseClient');// Adjusted path
 
 require('dotenv').config();
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;

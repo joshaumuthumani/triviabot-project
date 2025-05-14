@@ -8,7 +8,7 @@ const app = express();
 // Routes
 const questionRoutes = require('./routes/questions');
 const winnerRoutes = require('./routes/winners');
-const answerRoutes = require('./routes/answers');
+const answerRoutes = require('./routes/answer'); // ✅ Corrected from 'answers' to 'answer'
 
 // Middleware
 app.use(cors());
