@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }).single('attachment');
 const axios = require('axios');
-const supabase = require('../supabaseClient');
+const supabase = require('../../supabaseClient'); // Adjusted path
 
 require('dotenv').config();
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
@@ -31,7 +31,6 @@ router.post('/', upload, async (req, res) => {
     let attachmentUrl = null;
 
     if (req.file) {
-      // For now: assume you're serving /uploads statically like before
       attachmentUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
@@ -49,9 +48,10 @@ router.post('/', upload, async (req, res) => {
 
     if (error) throw error;
 
-    // Push to Discord via webhook
+    // Post to Discord
     const content = `**New Trivia Question!**\n${question}\n_Ends at ${new Date(endTime).toLocaleString()}_`;
     const payload = { content };
+
     if (attachmentUrl) {
       payload.embeds = [{ image: { url: attachmentUrl } }];
     }
