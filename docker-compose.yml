@@ -1,21 +1,6 @@
 version: "3.9"
 
 services:
-  traefik:
-    image: traefik:v2.11
-    container_name: triviabot-traefik
-    restart: unless-stopped
-    command:
-      - --configFile=/etc/traefik/traefik.yml
-    ports:
-      - "8080:8080"
-      - "8443:8443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./backend-server/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-    networks:
-      - traefik-net
-
   triviabot-backend:
     build:
       context: .
@@ -26,33 +11,17 @@ services:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
       - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
-    expose:
-      - "3002"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.triviabot-backend.rule=Host(`api.trivia.willflexbot.uk`)"
-      - "traefik.http.routers.triviabot-backend.entrypoints=web"
-      - "traefik.http.services.triviabot-backend.loadbalancer.server.port=3002"
-    networks:
-      - trivia
-      - traefik-net
+    ports:
+      - "3002:3002"
 
   triviabot-dashboard:
     build: ./dashboard-app
     container_name: triviabot-dashboard
     restart: unless-stopped
     environment:
-      - VITE_BACKEND_URL=https://api.trivia.willflexbot.uk
-    expose:
-      - "80"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.triviabot-dashboard.rule=Host(`trivia.willflexbot.uk`)"
-      - "traefik.http.routers.triviabot-dashboard.entrypoints=web"
-      - "traefik.http.services.triviabot-dashboard.loadbalancer.server.port=80"
-    networks:
-      - trivia
-      - traefik-net
+      - VITE_BACKEND_URL=http://localhost:3002
+    ports:
+      - "80:80"
 
   triviabot-bot:
     build: ./bot-app
@@ -64,11 +33,3 @@ services:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - BACKEND_URL=http://triviabot-backend:3002
       - TRIVIA_CHANNEL_ID=${TRIVIA_CHANNEL_ID}
-    networks:
-      - trivia
-
-networks:
-  trivia:
-    external: false
-  traefik-net:
-    external: true
